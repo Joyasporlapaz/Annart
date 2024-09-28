@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GALERIA</title>
+    <!-- icona nel tab-->
+    <link rel="icon" type="image/png" href="./assets/rings.png"> <!-- Se è un PNG -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Nascondi overflow della pagina */
+            
+        }
+
+        h1 {
+            font-family: "Great Vibes", sans-serif;
+            color: white;
+        }
+
+        .container {
+            position: relative;
+            height: 100vh; /* Imposta l'altezza della finestra */
+            overflow-y: auto; /* Consenti lo scroll verticale */
+        }
+
+        .catalog {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column; 
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+            height: auto; /* Altezza automatica per le card */
+            position: relative;
+            z-index: 2; 
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card h3 {
+            margin: 15px 0;
+            color: #333;
+        }
+
+        .card p {
+            padding: 0 15px;
+            color: #666;
+            margin: 15px 0; /* Margine attorno al testo */
+        }
+
+        .card button {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 0 0 10px 10px;
+            width: 100%; /* Larghezza del bottone al 100% */
+            margin-top: auto; /* Posiziona il bottone in fondo alla card */
+        }
+
+        .card button:hover {
+            background-color: #005f73;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 3; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            position: relative; /* Position relative to position buttons inside */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal img {
+            width: 100%;
+            height: auto;
+        }
+
+        .slide-container {
+            position: relative;
+        }
+
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            border-radius: 3px; /* Modificato per rimuovere angoli arrotondati */
+            user-select: none;
+            transform: translateY(-50%); /* Allinea verticalmente i bottoni */
+            background-color: transparent; /* Rendi il background trasparente */
+            border: none; /* Rimuovi il bordo */
+        }
+
+        .prev {
+            left: 10px; /* Posiziona il bottone a sinistra */
+        }
+
+        .next {
+            right: 10px; /* Posiziona il bottone a destra */
+        }
+
+        .prev:hover, .next:hover {
+            background-color: rgba(255, 255, 255, 0.5); /* Leggera sfumatura sul hover */
+        }
+
+        /* Canvas styles */
+        #defaultCanvas0 {
+            position: absolute; 
+            top: 0;
+            left: 0;
+            z-index: -1; 
+            pointer-events: none; 
+            width: 100%;
+            height: 100%; 
+        }
+
+        /* Elegant button styles */
+        .elegant-button {
+            display: inline-block;
+            margin: 18px auto;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #008CBA;
+            border: none;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .elegant-button:hover {
+            background-color: #005f73;
+            transform: scale(1.05);
+        }
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1 style="text-align: center;">GALERIA</h1>
+        <div class="catalog">
+            <!-- Card 1 -->
+            <div class="card">
+                <img src="assets/anello_1.jpeg" alt="Leather Shoes">
+                <h3>ANILLOS</h3>
+                <p>El anillo es un circulo perfecto, todo vuelve el inicio.</p>
+                <button onclick="openModal('ANILLOS', ['assets/anello_1.jpeg', 'assets/anello_2.jpeg', 'assets/anello_3.jpeg','assets/anello_4.jpeg', 
+                    'assets/anello_5.jpeg', 'assets/anello_6.jpeg','assets/anello_7.jpeg', 'assets/anello_8.jpeg', 'assets/anello_9.jpeg', 'assets/anello_10.jpeg'
+                ], 
+                'La joyería de cobre ha sido utilizada durante miles de años por su belleza estética y sus propiedades curativas.')">Creaciones</button>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card">
+                <img src="assets/esclavaRAME_2.jpeg" alt="Designer Watch">
+                <h3>PULSERAS</h3>
+                <p>Las propiedades curativas de las joyas de cobre han sido bien conocidas durante siglos.</p>
+                <button onclick="openModal('PULSERAS', ['assets/esclavaRAME_2.jpeg', 'assets/esclavaRAME_1.jpeg',
+                    'assets/esclavaRAME_3.jpeg', 'assets/esclavaRAME_5.jpeg', 'assets/esclavaRAME_6.jpeg', 'assets/esclavaRAME_7.jpeg', 'assets/duoAmatista.jpeg'
+                ], 
+                'Los antiguos egipcios, griegos y romanos usaron cobre para prevenir enfermedades y mejorar la circulación sanguínea.')">Creaciones</button>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card">
+                <img src="assets/rotondoOttone_1.jpeg" alt="Wireless Headphones">
+                <h3>PENDIENTES</h3>
+                <p>Joyas que reflejan Tradición y autenticidad.</p>
+                <button onclick="openModal('PENDIENTES', ['assets/rotondoOttone_1.jpeg','assets/rotondoRame_2.jpeg', 'assets/pendienteOndulato_1.jpeg',
+                    'assets/pendienteOndulato_2.jpeg', 'assets/lapislazuli.jpeg', 'assets/modello_1.jpeg', 'assets/modello_2.jpeg', 'assets/modello_3.jpeg',
+                    'assets/modello_4.jpeg'
+                ], 
+                '')">Creaciones</button>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card">
+                <img src="assets/collar_aventurina.jpeg" alt="Wireless Headphones">
+                <h3>COLLARES</h3>
+                <p>Piezas únicas que Celebran el trabajo Manual.</p>
+                <button onclick="openModal('PENDIENTES', ['assets/collar_aventurina.jpeg','assets/collar_cuarzoRosa.jpeg', 'assets/collar_cuarzoRosa2.jpeg',
+                'assets/collar_pietraMar_2.jpeg','assets/collar_pietraMar.jpeg', 'assets/collar_sinhilo.jpeg'
+                ], 
+                '')">Creaciones</button>
+            </div>
+            
+            <!-- Additional Cards -->
+            
+        </div>
+
+
+        <a href="./historia.html" class="elegant-button">Mi Historia</a>
+        <br>
+        <a href="./index.html" class="elegant-button">Vuelve atrás</a>
+
+
+
+
+        <!-- Modal Structure -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2 id="modal-title"></h2>
+                <div class="slide-container">
+                    <img id="modal-image" src="" alt="">
+                    <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+                    <button class="next" onclick="changeSlide(1)">&#10095;</button>
+                </div>
+                <p id="modal-description"></p>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <script>
+        let currentSlideIndex = 0;
+        let images = [];
+
+        function openModal(title, imgArray, description) {
+            images = imgArray; // Save the passed images
+            currentSlideIndex = 0; // Reset the slide index
+            document.getElementById("modal-title").innerText = title;
+            document.getElementById("modal-description").innerText = description;
+            document.getElementById("modal-image").src = images[currentSlideIndex]; // Show the first image
+            document.getElementById("myModal").style.display = "block"; // Show the modal
+        }
+
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none"; // Hide the modal
+        }
+
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            if (currentSlideIndex < 0) {
+                currentSlideIndex = images.length - 1; // Go to the last image
+            } else if (currentSlideIndex >= images.length) {
+                currentSlideIndex = 0; // Go to the first image
+            }
+            document.getElementById("modal-image").src = images[currentSlideIndex]; // Change the displayed image
+        }
+
+        // p5.js Variables
+        let particles = [];
+        let trail = [];
+        let timeout;
+
+        function preload() {
+            img = loadImage('./assets/pendienteOndulato_1.jpeg'); // Sostituisci con il percorso della tua immagine
+        }       
+
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.position(0, 0);
+            canvas.style('z-index', '-1'); // Place the canvas below the cards
+            canvas.style('pointer-events', 'none'); // Allow interaction with cards
+        }
+
+        function draw() {
+            // Set a soft background color
+            background(0, 60, 100, 200); // Soft white background
+
+            image(img, 0, 0, width, height); // Disegna l'immagine come sfondo
+
+
+            // Draw trails
+            for (let i = 0; i < trail.length; i++) {
+                let p = trail[i];
+                stroke(p.color);
+                strokeWeight(p.size);
+                point(p.x, p.y);
+            }
+
+            // Update particles
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                fill(p.color);
+                noStroke();
+                ellipse(p.x, p.y, p.size, p.size);
+                p.alpha -= 20; // Fade out effect
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        function mouseMoved() {
+            // Generate particles based on mouse movement
+            for (let i = 0; i < 3; i++) { // Create fewer particles per mouse movement
+                particles.push({
+                    x: mouseX + random(-5, 5), // Add random variation
+                    y: mouseY + random(-5, 5), // Add random variation
+                    size: random(2, 7), // Smaller particle size
+                    color: color(0, 95, 115,200)
+                    //color(random(200, 180, 150), random(255, 245, 220), random(220, 200, 180), 150) // Soft gold and silver colors
+                });
+            }
+
+            // Add trail point
+            trail.push({
+                x: mouseX,
+                y: mouseY,
+                size: random(1, 5),
+                color: color(0, 95, 115, 150)
+                //color(random(250, 230, 200), random(255, 255, 150), 0, 150) // Light yellow colors
+            });
+
+            // Limit trail length
+            if (trail.length > 50) {
+                trail.splice(0, 1); // Remove the oldest trail point
+            }
+
+            // Start a timeout to fade out the background effect after the mouse stops moving
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                particles = []; // Clear particles after a short delay
+                trail = []; // Clear trail after a short delay
+            }, 100); // Change duration here
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight); // Resize the canvas
+        }
+    </script>
+</body>
+</html>
